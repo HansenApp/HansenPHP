@@ -6,7 +6,8 @@ use PDO;
 
 class Model
 {
-    private PDO $pdo;
+    public PDO $pdo;
+    private $stmt;
 
     public function connect()
     {
@@ -27,5 +28,27 @@ class Model
     {
         $stmt = $this->pdo->prepare("DELETE FROM $table WHERE $where");
         $stmt->execute();
+    }
+    
+    public function query($query)
+    {
+        $this->stmt = $this->pdo->prepare($query);
+    }
+    
+    protected function execute()
+    {
+        $this->stmt->execute();
+    }
+    
+    public function all()
+    {
+        $this->execute();
+        $this->stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    public function single()
+    {
+        $this->execute();
+        $this->stmt->fetch(PDO::FETCH_ASSOC);
     }
 }
